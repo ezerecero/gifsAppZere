@@ -21,6 +21,7 @@ export class GifsService {
   constructor(private http: HttpClient) {
 
     this._historial = JSON.parse(localStorage.getItem('historial')!) || []
+    this.resultados = JSON.parse(localStorage.getItem('resultados')!) || []
 
     /* Esta es una manera de hacerlo igual a la de arriba
     if(localStorage.getItem('historial')){
@@ -45,6 +46,7 @@ export class GifsService {
     .subscribe( (resp) => {
       console.log(resp.data);
       this.resultados = resp.data;
+      localStorage.setItem('resultados', JSON.stringify(this.resultados))
       
     })
     
