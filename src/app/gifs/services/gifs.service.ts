@@ -1,5 +1,5 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable, Query } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { SearchGifsResponse, Gif } from '../interface/gifs.interface';
 
 @Injectable({
@@ -8,6 +8,7 @@ import { SearchGifsResponse, Gif } from '../interface/gifs.interface';
 export class GifsService {
 
   private apiKey: string = 'czbBX7XoVkJx7a8eKU0MSYcdKbLXn0Fs';
+  private servicioURL: string = 'https://api.giphy.com/v1/gifs';
   private _historial: string[] = [];
 
   //TODO: Cambiar any por sy tipo correspondiente
@@ -34,6 +35,7 @@ export class GifsService {
 
     query = query.trim().toLowerCase();
 
+    //Se agrega un elememto solo si no existe en el arreglo, por eso se usa includes
     if(!this._historial.includes(query)){
       this._historial.unshift(query);
       this._historial = this._historial.splice(0,10);
@@ -42,7 +44,13 @@ export class GifsService {
 
     }
 
-    this.http.get<SearchGifsResponse>(`https://api.giphy.com/v1/gifs/search?api_key=czbBX7XoVkJx7a8eKU0MSYcdKbLXn0Fs&q=${query}&limit=10`)
+    const params = new HttpParams()
+          .set('api_key', this.apiKey)
+          .set('limit', '10')
+          .set('q', query);
+          
+
+    this.http.get<SearchGifsResponse>(`${ this.servicioURL }/search`, {params})
     .subscribe( (resp) => {
       console.log(resp.data);
       this.resultados = resp.data;
